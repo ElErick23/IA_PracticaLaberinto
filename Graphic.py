@@ -6,17 +6,18 @@ from pygame.font import Font
 
 class Graphic:
 
-    BACKGROUND_COLOR = Color(255, 0, 0)
+    BACKGROUND_COLOR = Color(39, 49, 67)
     TEXT_COLOR = Color(255, 255, 255)
 
-    def __init__(self, parent, pos, size):
-        self.pos = pos
-        self.size = size
-        self.surface = parent.subsurface(Rect(pos, size))
+    def __init__(self):
         self.bg_color = self.BACKGROUND_COLOR
         self.txt_color = self.TEXT_COLOR
         self.font = Font('freesansbold.ttf', 15)
         self.sprites = []
+        self.surface = None
+
+    def init_surface(self, parent, size, pos=(0, 0)):
+        self.surface = parent.subsurface(Rect(pos, size))
 
     def _create_text(self, text=''):
         return self.font.render(text, True, self.txt_color, self.bg_color)

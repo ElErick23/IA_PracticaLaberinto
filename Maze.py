@@ -12,20 +12,29 @@ from Graphic import Graphic
 
 class Maze(Graphic):
 
-    def __init__(self, filename, parent, pos, size):
-        super().__init__(parent, pos, size)
+    def __init__(self, codes):
+        super().__init__()
         self.player = Player((0, 0), self.get_cell_at)
         self.selected = None
-        self.cells = []
-        with open(os.path.join(sys.path[0], filename)) as file:
-            lines = file.readlines()
-            for y, line in enumerate(lines):
-                line = line.replace('\n', '').split(',')
-                row = []
-                for x, code in enumerate(line):
-                    row.append(Cell(int(code), self.surface, x, y))
-                self.cells.append(row)
+        self.cells = [
+            [Cell(c, x, y) for x, c in enumerate(row)] for y, row in enumerate(codes)
+        ]
         Handler().set_callback(MOUSEMOTION, self.check_selected)
+
+    def init_surface(self, parent, size, pos=(0, 0)):
+        super().init_surface(parent, size, pos)
+        cell_w = int(size[0] / len(self.cells[0]))
+        cell_h = int(size[1] / len(self.cells))
+        side = min(cell_w, cell_h)
+        self.player.load_sprite((side, side))
+        for row in self.cells:
+            for c in row:
+                c.init_surface(
+                    self.surface,
+                    (side, side),
+                    (c.x * side, c.y * side)
+                )
+        return side * len(self.cells[0]), side * len(self.cells)
 
     def check_selected(self, event):
         selections = [
