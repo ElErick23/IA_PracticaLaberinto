@@ -1,10 +1,10 @@
 import pygame as pg
+import os
+import sys
 from pygame.constants import HWSURFACE, RESIZABLE
-from pygame import display
+from pygame import QUIT, display
 from Board import Board
-from Handler import Handler
-from pygame import QUIT
-from Board import Board
+from Cell import Cell
 from Menu import Menu
 from Handler import Handler
 
@@ -13,12 +13,26 @@ class main:
 
     def __init__(self):
         pg.init()
-        display.set_caption('Maze test')
-        screen = display.set_mode((825, 925), HWSURFACE)
-        self.handler = Handler()
-        self.board = Board(screen, (0, 100), (825, 825))
-        self.menu = Menu(self.board.maze, screen, (0, 0), (825, 100))
-        self.running = True
+        with open(os.path.join(sys.path[0], 'resources/maze.txt')) as file:
+            def moya(line):
+                return line.replace('\n', '').split(',')
+            codes = [[int(c) for c in moya(line)] for line in file.readlines()]
+
+        if all(len(row) == len(codes[0]) for row in codes):
+            ui = int(Cell.WIDTH / 4)
+            board_w = Cell.WIDTH * len(codes[0]) + ui
+            board_h = Cell.HEIGHT * len(codes) + ui
+            menu_w = board_w
+            menu_h = 50
+            display.set_caption('Maze test')
+            screen = display.set_mode((board_w, board_h + menu_h), HWSURFACE)
+            self.handler = Handler()
+            self.board = Board(screen, (0, menu_h), (board_w, board_h), ui)
+            self.menu = Menu(self.board.maze, screen, (0, 0), (menu_w, menu_h))
+            self.running = True
+        else:
+            raise Exception(
+                "Error al obtener datos, las filas deben ser igual de largas")
 
     def on_render(self):
         self.menu.render()

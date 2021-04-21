@@ -6,10 +6,11 @@ from pygame.rect import Rect
 
 class Board(Graphic):
 
-    def __init__(self, parent, pos, size):
+    def __init__(self, parent, pos, size, ui):
         super().__init__(parent, pos, size)
         self.bg_color = Color(255, 150, 150)
-        self.maze = Maze('resources/maze.txt', self.surface, (25, 25), (800, 800))
+        maze_w, maze_h = size[0] - ui, size[1] - ui
+        self.maze = Maze('resources/maze.txt', self.surface, (ui, ui), (maze_w, maze_h))
 
     def render(self):
         super().render()
