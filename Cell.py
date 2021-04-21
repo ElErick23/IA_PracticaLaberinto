@@ -13,11 +13,8 @@ class Cell(Graphic):
         2: {'Means': 'Water', 'Color': Color(100, 150, 255)},
     }
 
-    WIDTH, HEIGHT = 100, 100
-
-    def __init__(self, code, parent, x, y, width=WIDTH, height=HEIGHT):
-        self.pos = (x * width, y * height)
-        super().__init__(parent, self.pos, (width, height))
+    def __init__(self, code, x, y):
+        super().__init__()
         self.code = code
         self.x = x
         self.y = y
@@ -41,7 +38,7 @@ class Cell(Graphic):
         if player_sprite:
             self.surface.blit(player_sprite, (0, 0))
         if self.selected:
-            pg.draw.rect(self.surface, Color(255, 0, 0, 0),
+            pg.draw.rect(self.surface, Color(131, 182, 210),
                          self.surface.get_rect(), width=5)
 
     # def get_coords(self):

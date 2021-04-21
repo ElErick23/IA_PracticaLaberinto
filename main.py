@@ -1,24 +1,47 @@
 import pygame as pg
+import os
+import sys
 from pygame.constants import HWSURFACE, RESIZABLE
-from pygame import display
+from pygame import VIDEORESIZE, QUIT, display
 from Board import Board
-from Handler import Handler
-from pygame import QUIT
-from Board import Board
+from Cell import Cell
 from Menu import Menu
 from Handler import Handler
 
 
 class main:
 
+    MIN_WIDTH, MIN_HEIGHT = 300, 300
+
     def __init__(self):
         pg.init()
-        display.set_caption('Maze test')
-        screen = display.set_mode((825, 925), HWSURFACE)
-        self.handler = Handler()
-        self.board = Board(screen, (0, 100), (825, 825))
-        self.menu = Menu(self.board.maze, screen, (0, 0), (825, 100))
-        self.running = True
+        with open(os.path.join(sys.path[0], 'resources/maze.txt')) as file:
+            def split(line):
+                return line.replace('\n', '').split(',')
+            codes = [[int(c) for c in split(line)]
+                     for line in file.readlines()]
+
+        if all(len(row) == len(codes[0]) for row in codes):
+            display.set_caption('Maze test')
+            self.handler = Handler()
+            self.board = Board(codes)
+            self.menu = Menu(self.board.maze)
+            self.running = True
+            self.load_screen(600, 600)
+        else:
+            raise Exception(
+                "Error al obtener datos, las filas deben ser igual de largas")
+
+    def load_screen(self, width, height):
+        width = max(width, self.MIN_WIDTH)
+        height = max(height, self.MIN_HEIGHT)
+        screen = display.set_mode((width, height), HWSURFACE | RESIZABLE)
+        menu_h = 50
+        board_w, board_h = self.board.init_surface(screen, (width, height - menu_h), (0, menu_h))
+        self.menu.init_surface(screen, (width, menu_h))
+        fixed_size = (board_w, board_h + menu_h)
+        if fixed_size != (width, height):
+            self.load_screen(board_w, board_h + menu_h)
 
     def on_render(self):
         self.menu.render()
@@ -27,7 +50,9 @@ class main:
 
     def on_event(self, event):
         self.handler.exec_callbacks(event)
-        if event.type == QUIT:
+        if event.type == VIDEORESIZE:
+            self.load_screen(event.w, event.h)
+        elif event.type == QUIT:
             self.running = False
 
     def on_loop(self):

@@ -7,10 +7,10 @@ from Graphic import Graphic
 
 class Menu(Graphic):
 
-    TXT_COLOR = Color(255, 255, 255)
+    # TXT_COLOR = Color(255, 255, 255)
 
-    def __init__(self, maze, parent, pos, size):
-        super().__init__(parent, pos, size)
+    def __init__(self, maze):
+        super().__init__()
         self.maze = maze
         # self.pencil = pg.transform.scale(pg.image.load(
             # "resources/pencil.png").convert_alpha(), (100, 100))

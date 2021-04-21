@@ -9,11 +9,14 @@ class Player:
 
     def __init__(self, start, sense_cell):
         self.x, self.y = start
-        self.sprite = pg.image.load("resources/player.png").convert_alpha()
-        self.sprite = pg.transform.scale(self.sprite, (Cell.WIDTH, Cell.HEIGHT))
+        self.sprite = None
         self.discovered_cells = []
         self.sense_cell = sense_cell
         Handler().set_callback(KEYDOWN, self.move)
+
+    def load_sprite(self, size):
+        img = pg.image.load("resources/player.png").convert_alpha()
+        self.sprite = pg.transform.scale(img, size)
 
     def is_at(self, x, y):
         return (self.x, self.y) == (x, y)
